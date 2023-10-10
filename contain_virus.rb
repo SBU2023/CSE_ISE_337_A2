@@ -1,110 +1,30 @@
-require 'set'
-class Region
-        attr_accessor :infected, :uninfected, :walls
-        
-        def initialize
-            @infected = Set.new
-            @uninfected = Set.new
-            @walls = 0
-        end
-    end
-
-def contain_virus(is_infected)
-    re = is_infected.length
-    ce = is_infected[0].length
-    ans = 0
-
-    while true
-        holder = []
-        v = Array.new(re) { Array.new(ce, false) }
-        
-        (0...re).each do |r|
-            (0...ce).each do |c|
-                if is_infected[r][c] == 1 && !v[r][c]
-                    region = Region.new
-                    get_region(is_infected, region, re, ce, v, r, c)
-                    holder << region
-                end
-            end
-        end
-        
-        index_of_max_uninfected = 0
-        size_of_max_uninfected = 0
-        
-        holder.each_with_index do |region, i|
-            if region.uninfected.size > size_of_max_uninfected
-                size_of_max_uninfected = region.uninfected.size
-                index_of_max_uninfected = i
-            end
-        end
-        
-        if holder.empty?
-            break
-        end
-        
-        max_set = holder[index_of_max_uninfected].infected
-        
-        max_set.each do |row_col|
-            r = row_col / ce
-            c = row_col % ce
-            is_infected[r][c] = 2
-        end
-        
-        ans += holder[index_of_max_uninfected].walls
-        
-        holder.each_with_index do |region, i|
-            next if i == index_of_max_uninfected
-            uninfected = region.uninfected
-            
-            uninfected.each do |row_col|
-                r = row_col / ce
-                c = row_col % ce
-                is_infected[r][c] = 1
+def contain_virus(grid)
+    return 0 if grid.empty?
+    height = grid.size
+    width = grid[0].size
+    answer = 0
+    (0...height).each do |i|
+        (0...width).each do |j|
+            if 1 == grid[i][j]
+                perimeter = 4
+                # check top
+                perimeter -= 1 if i-1 >= 0 && 1 == grid[i-1][j]
+                # check right
+                perimeter -= 1 if j+1 < width && 1 == grid[i][j+1]
+                # check bottom
+                perimeter -= 1 if i+1 < height && 1 == grid[i+1][j]
+                # check left 
+                perimeter -= 1 if j-1 >= 0 && 1 == grid[i][j-1]
+                answer += perimeter
             end
         end
     end
     
-    return ans
+    answer
+    
 end
 
-def get_region(is_infected, region, re, ce, v, r, c)
-    dirs = [[0, 1], [1, 0], [0, -1], [-1, 0]]
-    
-    if r < 0 || c < 0 || r == re || c == ce || is_infected[r][c] == 2
-        return
-    end
-    
-    if is_infected[r][c] == 1
-        if v[r][c]
-            return
-        end
-        region.infected.add(r * ce + c)
-    end
-    
-    if is_infected[r][c] == 0
-        region.uninfected.add(r * ce + c)
-        region.walls += 1
-        return
-    end
-    
-    v[r][c] = true
-    
-    dirs.each do |dir|
-        nr = r + dir[0]
-        nc = c + dir[1]
-        get_region(is_infected, region, re, ce, v, nr, nc)
-    end
-end
-
-
-# Example input, where 1 represents infected cells and 0 represents uninfected cells:
-# isInfected = [
-#   [0, 1, 0, 0, 1],
-#   [0, 1, 0, 0, 1],
-#   [0, 0, 0, 0, 1]
-# ]
-
-isInfected = [[0,1,0,0,0,0,0,1],[0,1,0,0,0,0,0,1],[0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0]]
+isInfected = [[0,1,0,0],[1,1,1,0],[0,1,0,0],[1,1,0,0]]
 
 # Call the function and store the result in a variable
 result = contain_virus(isInfected)
