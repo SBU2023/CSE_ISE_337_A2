@@ -98,14 +98,16 @@ end
 
 
 # Example input, where 1 represents infected cells and 0 represents uninfected cells:
-is_infected = [
-  [0, 1, 0, 0, 1],
-  [0, 1, 0, 0, 1],
-  [0, 0, 0, 0, 1]
-]
+# isInfected = [
+#   [0, 1, 0, 0, 1],
+#   [0, 1, 0, 0, 1],
+#   [0, 0, 0, 0, 1]
+# ]
+
+isInfected = [[0,1,0,0,0,0,0,1],[0,1,0,0,0,0,0,1],[0,0,0,0,0,0,0,1],[0,0,0,0,0,0,0,0]]
 
 # Call the function and store the result in a variable
-result = contain_virus(is_infected)
+result = contain_virus(isInfected)
 
 # Print the result
 puts "Number of walls needed: #{result}"
